@@ -64,7 +64,7 @@ def generar_qr_code_url(datoencriptado):
     qr.make(fit=True)
     qr_image = qr.make_image(fill="black", back_color="white")
     qr_buffer = io.BytesIO()
-    qr_image.save(qr_buffer, format="PNG")
+    qr_image.save(qr_buffer)
     qr_buffer.seek(0)
     return qr_buffer
 
