@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EntradasPE.com</title>
+
+    <link rel="stylesheet" href="{% static  'styles/bs5.css' %}">
+    <link rel="stylesheet" href="{% static  'styles/fa/css/all.css' %}">
+    <link rel="stylesheet" href="{% static  'homePage/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="row justify-content-center align-items-center g-2 ">
+        <div class="container-fluid row gradient-bg m-0">
+            <div class="col-md-6 d-grid justify-content-center mt-3 mb-3">
+                <img src="{% static 'imagenes/headerlogo.png' %}"
+                    style="width: 100%; min-width: 100px; max-width: 200px; cursor: pointer;"
+                    onclick="javascript:location.reload(true)" />
+            </div>
+            <div class="col-md-6 d-grid justify-content-center align-items-center mt-3 mb-3">
+                <a name="" id="" class="btn btn-primary text-center table-hover text-poppins" href="/administrar"
+                    role="button"
+                    style="width: 100%; min-width: 100px; max-width: 300px; background-color: var(--red); font-size: 1.2em; border-color: var(--red);"><i
+                        class="fas fa-user-cog"></i>&nbsp;Administrar entradas</a>
+            </div>
+        </div>
+
+        <div class="container-fluid row gradient-bg m-0 p-0 overflow-hidden">
+            <img class="p-0" id="banner-image" src="{% static 'homePage/images/bannerpc.jpg' %}" style="width: 100%;" />
+        </div>
+        <div class="container-fluid row m-0" style="background-color: var(--red);">
+            <div class="col-md-7 d-grid justify-content-center mt-3 mb-3">
+                <h1 class="text-white text-poppins-italic text-center">ADQUIERE TUS ENTRADAS EN</h1>
+            </div>
+            <div class="col-md-5 d-grid justify-content-center align-items-center mt-1 mb-1">
+                <img src="{% static 'homePage/images/zonacines.jpg' %}"
+                    style="width: 100%; min-width: 100px; max-width: 300px;" />
+            </div>
+        </div>
+
+        <div id="pContainer" class="row mt-4 d-flex justify-content-center"
+            style="padding-left: 15%; padding-right: 15%;">
+
+            <div class="row">
+                <div class="col-md-6 my-2 d-grid align-items-center">
+                    <div class="d-flex justify-content-center">
+                        <input type="text" class="form-control text-poppins text-center bg-grey" name="" id="txtSearch1"
+                            placeholder="Busca por artista, evento o lugar"
+                            style="width: 100%; max-width: 600px; font-size: 1.5em;">
+                    </div>
+                </div>
+                <div class="col-md-6 my-2 d-flex">
+                    <div class="col-4 d-grid justify-content-center align-items-center">
+                        <div class="container d-flex justify-content-center">
+                            <i class="fas fa-layer-group" style="font-size: 2em;"></i>
+                        </div>
+                        <h1 class="text-poppins m-0 mt-1" style="font-size: 1em;">CATEGORIAS</h1>
+                    </div>
+                    <div class="col-4 d-grid justify-content-center align-items-center">
+                        <div class="container d-flex justify-content-center">
+                            <i class="fas fa-map-marker-alt" style="font-size: 2em;"></i>
+                        </div>
+                        <h1 class="text-poppins m-0 mt-1" style="font-size: 1em;">CIUDAD</h1>
+                    </div>
+                    <div class="col-4 d-grid justify-content-center align-items-center">
+                        <div class="container d-flex justify-content-center">
+                            <i class="fas fa-calendar" style="font-size: 2em;"></i>
+                        </div>
+                        <h1 class="text-poppins m-0 mt-1" style="font-size: 1em;">FECHAS</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2">
+                <div class="container d-flex align-items-center">
+                    <i class="fas fa-star m-0" style="font-size: 1.5em; color: var(--red);"></i>
+                    <h1 class="m-0">&nbsp;Lo mas CHÉVERE</h1>
+                </div>
+            </div>
+
+            <div class="row mt-2 d-flex">
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <div class="container w-100 p-0"> <img class="w-100 rounded-top"
+                                src="{%static 'homePage/images/item1.png'%}" />
+                        </div>
+                        <div class="container w-100 p-0 d-flex my-3">
+                            <div class="col-12 d-flex justify-content-center text-poppins align-items-center text-center"
+                                style="font-size: 1.4em;"><img class="h-auto" style="width: 15%;"
+                                    src="{%static 'homePage/images/logosmall.png'%}" />
+                                &nbsp;&nbsp;&nbsp;&nbsp;Grupo 5 en
+                                Iquitos </div>
+                        </div>
+                        <div class="container w-100 p-0" style="background: var(--red_box);">
+                            <div class="col-12 d-flex justify-content-center align-items-center text-center"
+                                style="font-size: 1.4em;">
+                                <i class="fas fa-calendar my-3">&nbsp;&nbsp;Domingo 25 Jun - 6 pm</i>
+                            </div>
+                        </div>
+                        <div class="container w-100 p-0 d-flex my-3">
+                            <div class="col-6 d-flex justify-content-center rounded-bottom align-items-center"
+                                style="font-size: 1.4em;">
+                                <h1 class="text-poppins d-flex m-0 text-center " style="font-size: .8em;">
+                                    Desde: S/
+                                    100.00</h1>
+                            </div>
+                            <div class="col-6 d-flex justify-content-center">
+                                <a name="" id="" class="btn btn-primary text-center table-hover text-poppins"
+                                    href="/comprar" role="button"
+                                    style="min-width: 100px; max-width: 300px; background-color: var(--red); font-size: 1.2em; border-color: var(--red);">
+                                    &nbsp;Comprar&nbsp;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex ">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <img src="{% static 'homePage/images/adbanner.jpg' %}" style="width: 100%; height: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <img src="{% static 'homePage/images/adbanner.jpg' %}" style="width: 100%; height: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <img src="{% static 'homePage/images/adbanner.jpg' %}" style="width: 100%; height: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <img src="{% static 'homePage/images/adbanner.jpg' %}" style="width: 100%; height: 100%;" />
+                    </div>
+                </div>
+
+                <div class="col-xxl-4 col-sm-6 col-12 p-0 mx-0 d-flex">
+                    <div class="container d-grid p-0 mx-2 justify-content-center mt-3 bg-white shadow-lg rounded">
+                        <img src="{% static 'homePage/images/adbanner.jpg' %}" style="width: 100%; height: 100%;" />
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <!-- <div class="header">
+        <img src="{% static 'imagenes/headerlogo.png' %}" style="height: 30px; margin-left: 5%; align-self: center;"
+            onclick=" javascript:location.reload(true)" />
+    </div>
+    <div class="containerBotones">
+        <a href="{% url 'comprarPage' %}">Comprar entradas</a>
+        <a href="{% url 'administrarPage' %}">Administrar entradas</a>
+    </div>
+
+    <div class="containerBanner">
+        <div class="containerBanner1">
+            <img src="{%static 'imagenes/footerlogo.png'%}" />
+        </div>
+        <div class="containerBanner2">
+            <p>Conócenos</p>
+            <p>Libro de reclamaciones</p>
+        </div>
+        <div class="containerBanner3">
+            <div class="containerReferencias">
+                <a href="#">Acerca de nosotros</a>
+                <a href="#">Preguntas frecuentes</a>
+                <a href="#">Terminos y condiciones</a>
+                <a href="#">Politica de privacidad</a>
+            </div>
+            <div class="containerImagen">
+                <img src="{%static 'imagenes/libro.png' %}" />
+            </div>
+        </div>
+        <div class="containerBanner4">
+            <p>Contactanos</p>
+            <div class="containerContacto">
+                <img src="{%static 'imagenes/whatsapp.png' %}" />
+                <img src="{%static 'imagenes/telegram.png' %}" />
+                <img src="{%static 'imagenes/correo.png' %}" />
+            </div>
+        </div>
+    </div>
+
+    <div class="containerRedes">
+        <p>Siguenos</p>
+        <div class="containerRedesLogos">
+            <div class="containerRed">
+                <img src="{%static 'imagenes/facebook.png' %}" />
+            </div>
+            <div class="containerRed">
+                <img src="{%static 'imagenes/instagram.png' %}" />
+            </div>
+            <div class="containerRed">
+                <img src="{%static 'imagenes/linkedin.png' %}" />
+            </div>
+            <div class="containerRed">
+                <img src="{%static 'imagenes/twitter.png' %}" />
+            </div>
+            <div class="containerRed">
+                <img src="{%static 'imagenes/youtube.png' %}" />
+            </div>
+        </div>
+
+        <div class="footer">
+            <img src="{% static 'imagenes/footerlogo.png' %}" height="30px"
+                style="display: flex; justify-self: center;  align-self: center;"
+                onclick="javascript:location.reload(true)" />
+        </div>
+    </div> -->
+
+</body>
+<script src="{%static 'homePage/script.js'%}"></script>
+
+</html>

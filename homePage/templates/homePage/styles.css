@@ -1,0 +1,50 @@
+:root {
+    --red: #FF0043;
+    --white: #ffffff;
+    --verde: #07A781;
+    --morado: #7643F6;
+    --negro: #000000;
+    --gris: #858484;
+    --yelow: #d9e806;
+    --azul: #01A0E2;
+    --rosado: #EC1074;
+    --red_box: #fe98ba;
+}
+
+.gradient-bg {
+    background: linear-gradient(to right, var(--red), var(--negro));
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.text-poppins {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+.text-poppins-italic {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.rounded-circle {
+    border-radius: 50%;
+    /* Hace que el botón sea circular */
+    width: 100px;
+    /* Ajusta el tamaño del botón circular según tus preferencias */
+    height: 100px;
+    /* Ajusta el tamaño del botón circular según tus preferencias */
+    font-size: 24px;
+    /* Ajusta el tamaño del texto dentro del botón */
+    line-height: 100px;
+    /* Centra verticalmente el texto dentro del botón */
+}
+
+.bg-grey {
+    background-color: lightgrey;
+}
+
+.mx {
+    margin-left: 25%;
+    margin-right: 25%;
+}
