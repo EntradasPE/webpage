@@ -8,7 +8,7 @@ from .views import loaderio_verification
 urlpatterns = [
     path("", views.homePage, name="homePage"),
     #path("comprar/", comprarPage.as_view(), name="comprarPage"),
-    path("comprar/", views.comprarPage, name="comprarPage"),
+    path("comprar/", comprarPage.as_view(), name="comprarPage"),
     #path("resumen/", comprarPage.as_view(), name="comprarPage"),
     path("administrar/", views.administrarPage, name="administrarPage"),
     path('descargar_boleto/<entrada_id>/', views.descargar_boleto, name='descargar_boleto'),
