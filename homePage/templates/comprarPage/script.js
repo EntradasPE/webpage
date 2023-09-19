@@ -309,9 +309,9 @@ function calculaCodigoVerificacion(dni) {
 }
 
 function generarCompra() {
-    // nombre = document.getElementById("inputNombre").value
-    // apellido = document.getElementById("inputNombre").value
-    // pin = document.getElementById("inputPIN").value
+    nombre = document.getElementById("inputNombre").value
+    apellido = document.getElementById("inputNombre").value
+    pin = document.getElementById("inputPIN").value
     if (nombre.length < 2) {
         swalMensaje("¡Debe ingresar un nombre valido!")
         return
