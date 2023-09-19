@@ -279,6 +279,7 @@ class comprarPage(View):
             return render(
                 request, "ticketsCompradosPage/ticketsCompradosPage.html", contexto
             )
+        return JsonResponse({"Estado": "Valido", "Mensaje": "Se ha enviado un mensaje con su codigo de validacion"})
         return render(request, "comprarPage/comprarPage.html", datos)
 
     def post(self, request):
