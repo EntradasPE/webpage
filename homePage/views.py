@@ -279,7 +279,6 @@ class comprarPage(View):
             return render(
                 request, "ticketsCompradosPage/ticketsCompradosPage.html", contexto
             )
-        return JsonResponse({"Estado": "Valido", "Mensaje": "Se ha enviado un mensaje con su codigo de validacion"})
         return render(request, "comprarPage/comprarPage.html", datos)
 
     def post(self, request):
@@ -306,6 +305,8 @@ class comprarPage(View):
                     print(
                         "Error!!! No se pudo generar codigo de validacion NO REPETIDO"
                     )
+                    return JsonResponse({"Estado": "Invalido", "Mensaje": "Algo salio mal, intente nuevamente"})
+
                 else:
                     print(
                         "Boton SMS presionado",
@@ -315,7 +316,8 @@ class comprarPage(View):
                         codigoValidacion,
                     )
                     almacenaCelularValidador(celular, codigoValidacion, 1)
-
+                    return JsonResponse({"Estado": "Valido", "Mensaje": "Se ha enviado un mensaje con su codigo de validacion"})
+              
                 return render(request, "comprarPage/comprarPage.html", datos)
 
             elif request.POST.get("comando") == "leerCantidadEntradas":
