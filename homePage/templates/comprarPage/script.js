@@ -100,7 +100,7 @@ function enviarCodigoSMS() {
         type: 'POST',
         url: '/comprar/',
         data: {
-            'Comando': 'EnviarSMS',
+            'boton': 'sms',
             'celular': celular,
             'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
         },
@@ -131,7 +131,7 @@ function enviarCodigoSMS() {
                             type: 'POST',
                             url: '/comprar/',
                             data: {
-                                'Comando': 'Verificar',
+                                'boton': 'verificar',
                                 'celular': celular,
                                 'codigo': OTP,
                                 'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
