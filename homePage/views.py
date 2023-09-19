@@ -13,34 +13,22 @@ from .codigoValidacion import almacenaCelularValidador, buscarCodigoEnBaseDatos
 from .generaTickets import generaNumeroTicket
 from .generaCIP import generaCIP
 from django.http import JsonResponse
-
 from .models import Pagos
 from django.http import FileResponse
-
 from django.http import HttpResponse
 import io
 import qrcode
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-import pdfkit
 from django.template.loader import render_to_string
-
 from django.utils import timezone
 from django.utils.timezone import activate
 import pytz
 from datetime import timedelta
-
 import base64
 from django.conf import settings
-from io import BytesIO
-from xhtml2pdf import pisa
-import os
 from django.contrib.sites.shortcuts import get_current_site
 from django.views import View
-
 from .encripdecripEntradas import encriptador, desencriptador
 from .generaCodigoSeguridad import generacodigoseguridad
-
 import re
 
 
