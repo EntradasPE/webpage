@@ -246,12 +246,10 @@ def confirmarentradas(cipRecibo):
         ticket.fechaHoraConfirmado = timezone.now()
         ticket.save()
 
-
-class comprarPage(View):
-    def get(self, request):
+def comprar(request):
+    if request.method == "GET":
         preguntas = Preguntas.objects.all()
         entradas = Tipos.objects.all().order_by("tipo")
-
         boxes1 = boxesRestante1.objects.order_by("box")
         boxes2 = boxesRestante2.objects.order_by("box")
         boxes3 = boxesRestante3.objects.order_by("box")
@@ -262,6 +260,446 @@ class comprarPage(View):
             "boxes2": boxes2,
             "boxes3": boxes3,
         }
+        return render(request, "comprarPage/comprarPage.html", datos)
+
+    elif request.method == "POST":
+        if request.POST.get("boton") == "sms":
+                print("Boton SMS presionado")
+                celular = request.POST.get("celular")
+                codigoValidacion = generaCodigoValidacionNumeros(8)
+                if codigoValidacion == "":
+                    print(
+                        "Error!!! No se pudo generar codigo de validacion NO REPETIDO"
+                    )
+                    return JsonResponse({"Estado": "Invalido", "Mensaje": "Algo salio mal, intente nuevamente"})
+
+                else:
+                    print(
+                        "Boton SMS presionado",
+                        "Celular:",
+                        celular,
+                        "Codigo:",
+                        codigoValidacion,
+                    )
+                    almacenaCelularValidador(celular, codigoValidacion, 1)
+                    return JsonResponse({"Estado": "Valido", "Mensaje": "Se ha enviado un mensaje con su codigo de validacion"})
+        elif request.POST.get("boton") == "verificar":
+                print("Boton verificar presionado")
+                celular = request.POST.get("celular")
+                codigoValidacionIngresado = request.POST.get("codigo")
+                responseData = {"data": "Codigo Incorrecto"}
+                if buscarCodigoEnBaseDatos(celular, codigoValidacionIngresado, 1):
+                    print("Codigo Correcto!!!")
+                    responseData = {"Estado": "Valido"}
+                else: responseData = {"Estado": "Invalido"}
+                return JsonResponse(responseData)
+        elif request.POST.get("boton") == "comprar":
+                print("POST COMPRAR ENTRADA")
+
+                celular = request.POST.get("celular")
+                codigo = request.POST.get("codigo")
+                pin = request.POST.get("pin")
+                nombre = request.POST.get("nombre")
+                dni = request.POST.get("dni")
+                correo = request.POST.get("correo")
+                pregunta1 = request.POST.get("pregunta1")
+                respuesta1 = request.POST.get("respuesta1")
+                pregunta2 = request.POST.get("pregunta2")
+                respuesta2 = request.POST.get("respuesta2")
+                pregunta3 = request.POST.get("pregunta3")
+                respuesta3 = request.POST.get("respuesta3")
+                box1 = request.POST.get("boxes1")  # Box Izquierdo 4
+                box2 = request.POST.get("boxes2")  # Box Derecho Tipo 5
+                box3 = request.POST.get("boxes3")  # Box Alimanha Tipo 6
+                cip = generaCIP(9)
+                arregloEntradas1 = request.POST.get("cantidadEntradas1")
+                arregloEntradas2 = request.POST.get("cantidadEntradas2")
+                arregloEntradas3 = request.POST.get("cantidadEntradas3")
+                print(arregloEntradas1)
+                print(arregloEntradas2)
+                print(arregloEntradas3)
+                print(box1)
+                print(box2)
+                print(box3)
+                cantTiposEntradas = Tipos.objects.count()
+                entradasCantidad = []
+                for i in range(cantTiposEntradas):
+                    entradasCantidad.append(
+                        request.POST.get("cantidadEntradas" + str(i + 1))
+                    )
+                print(entradasCantidad)
+                error = "ninguno"
+                montoPagar = 0
+                entradasElegidas = {}
+                idxEntradasElegidas = 0  # Se usa para el key a mostrar
+                for idxTiposEntradas in range(cantTiposEntradas):
+                    descripcionTipo = Tipos.objects.get(
+                        tipo=(idxTiposEntradas + 1)
+                    ).descripcion
+                    if entradasCantidad[idxTiposEntradas] == str(0):
+                        continue
+                    idxEntradasElegidas = idxEntradasElegidas + 1
+                    # print(idxEntradasElegidas)
+                    key = f"entrada{idxEntradasElegidas}"
+                    value = {
+                        "id": descripcionTipo,
+                        "cantidad": entradasCantidad[idxTiposEntradas],
+                        "tipo": str(idxTiposEntradas + 1),
+                    }
+                    entradasElegidas[key] = value
+                    montoPagar = montoPagar + int(
+                        entradasCantidad[idxTiposEntradas]
+                    ) * int(Tipos.objects.get(tipo=(idxTiposEntradas + 1)).precio)
+
+                    ##############################
+                    auxiliarDisminuyeEntradas = Tipos.objects.get(
+                        tipo=(idxTiposEntradas + 1)
+                    )
+                    auxiliarDisminuyeEntradas.cantidad = (
+                        auxiliarDisminuyeEntradas.cantidad
+                    )
+                    if (
+                        auxiliarDisminuyeEntradas.cantidad
+                        - int(entradasCantidad[idxTiposEntradas])
+                    ) < 0:
+                        error += "No quedan entradas del tipo: " + descripcionTipo
+                        break
+                    if idxTiposEntradas + 1 == 4:
+                        print(box1)
+                        auxiliarDisminuyeBox1 = boxesRestante1.objects.get(
+                            box=int(box1)
+                        )
+                        if auxiliarDisminuyeBox1.ocupado:
+                            error = "El box: " + str(box1) + " ya fue comprado."
+                            break
+                    if idxTiposEntradas + 1 == 5:
+                        print(box2)
+                        auxiliarDisminuyeBox2 = boxesRestante2.objects.get(
+                            box=int(box2)
+                        )
+                        if auxiliarDisminuyeBox2.ocupado:
+                            error = (
+                                "No queda el box: " + str(box2) + " ya fue comprado."
+                            )
+                            break
+                    if idxTiposEntradas + 1 == 6:
+                        print(box3)
+                        auxiliarDisminuyeBox3 = boxesRestante3.objects.get(
+                            box=int(box3)
+                        )
+                        if auxiliarDisminuyeBox3.ocupado:
+                            error = (
+                                "No queda el box: " + str(box3) + " ya fue comprado."
+                            )
+                            break
+
+                if error != "ninguno":
+                    responseData = {
+                        "error": error,
+                    }
+                    return JsonResponse({"Mensaje": "Algo salio mal, intente nuevamente", "Estado": "Invalido"})
+
+                #########################################################
+                # PAGO
+                nuevaCompra = Pagos()
+                nuevaCompra.estado = 1  # Generado en pagina de compra
+                nuevaCompra.fechaHoraPREP = timezone.now()
+                # Nulo fechaHoraCONF
+                # Nulo fechaHoraPAGO
+                # Nulo fechaHoraSmsTicketsPagados
+
+                nuevaCompra.celular = celular
+
+                nuevaCompra.cip = cip
+                nuevaCompra.pin = pin
+                nuevaCompra.monto = montoPagar
+                # confirmado
+                # sms tickets pagados
+                nuevaCompra.nombre = nombre
+                nuevaCompra.correo = correo
+                nuevaCompra.dni = dni
+                nuevaCompra.pregunta1 = pregunta1
+                nuevaCompra.pregunta2 = pregunta2
+                nuevaCompra.pregunta3 = pregunta3
+                respuesta1 = respuesta1
+                respuesta2 = respuesta2
+                respuesta3 = respuesta3
+                nuevaCompra.save()
+                #########################################################
+                # TICKETS
+                error = "ninguno"
+                for numTipo in range(cantTiposEntradas):
+                    # print(request.POST.get('tipoentrada'+str(i+1)))
+                    if int(entradasCantidad[numTipo]) == 0:
+                        continue
+
+                    auxiliarDisminuyeEntradas = Tipos.objects.get(tipo=(numTipo + 1))
+                    auxiliarDisminuyeEntradas.cantidad = (
+                        auxiliarDisminuyeEntradas.cantidad
+                    )
+                    descripcionTipoEntrada = Tipos.objects.get(
+                        tipo=(numTipo + 1)
+                    ).descripcion
+                    if (
+                        auxiliarDisminuyeEntradas.cantidad
+                        - int(entradasCantidad[numTipo])
+                    ) < 0:
+                        error = (
+                            "No quedan entradas del tipo: "
+                            + Tipos.objects.get(tipo=(numTipo + 1)).descripcion
+                        )
+                        break
+                    auxiliarDisminuyeEntradas.cantidad = (
+                        auxiliarDisminuyeEntradas.cantidad
+                        - int(entradasCantidad[numTipo])
+                    )
+                    auxiliarDisminuyeEntradas.save()
+                    if numTipo + 1 == 4:
+                        ticket = Tickets()
+                        ticket.numeroBox = box1
+                        auxiliarDisminuyeBox1 = boxesRestante1.objects.get(
+                            box=int(box1)
+                        )
+                        if auxiliarDisminuyeBox1.ocupado:
+                            error = "El box: " + box1 + " ya fue comprado."
+                            break
+                        auxiliarDisminuyeBox1.ocupado = True
+                        auxiliarDisminuyeBox1.save()
+                        for _ in range(10):
+                            ticket = Tickets()
+                            ticket.ticket = generaNumeroTicket()
+                            ticket.estado = 1
+                            ticket.codigoseguridad = generacodigoseguridad()
+                            ticket.pin = pin
+                            ticket.fechaHoraCambio = timezone.now()
+                            ticket.celular = celular
+                            ticket.tipo = descripcionTipoEntrada
+                            ticket.numeroBox = box1
+                            ticket.cip = cip
+                            ticket.nombre = nombre
+                            ticket.correo = correo
+                            ticket.dni = dni
+                            ticket.pregunta1 = pregunta1
+                            ticket.pregunta2 = pregunta2
+                            ticket.pregunta3 = pregunta3
+                            ticket.respuesta1 = respuesta1
+                            ticket.respuesta2 = respuesta2
+                            ticket.respuesta3 = respuesta3
+                            ticket.save()
+
+                    if numTipo + 1 == 5:
+                        ticket = Tickets()
+                        ticket.numeroBox = box2
+                        auxiliarDisminuyeBox2 = boxesRestante2.objects.get(
+                            box=int(box2)
+                        )
+                        if auxiliarDisminuyeBox2.ocupado:
+                            error = "No queda el box: " + box2 + " ya fue comprado."
+                            break
+                        auxiliarDisminuyeBox2.ocupado = True
+                        auxiliarDisminuyeBox2.save()
+                        for _ in range(10):
+                            ticket = Tickets()
+                            ticket.ticket = generaNumeroTicket()
+                            ticket.estado = 1
+                            ticket.codigoseguridad = generacodigoseguridad()
+                            ticket.pin = pin
+                            ticket.fechaHoraCambio = timezone.now()
+                            ticket.celular = celular
+                            ticket.tipo = descripcionTipoEntrada
+                            ticket.numeroBox = box2
+                            ticket.cip = cip
+                            ticket.nombre = nombre
+                            ticket.correo = correo
+                            ticket.dni = dni
+                            ticket.pregunta1 = pregunta1
+                            ticket.pregunta2 = pregunta2
+                            ticket.pregunta3 = pregunta3
+                            ticket.respuesta1 = respuesta1
+                            ticket.respuesta2 = respuesta2
+                            ticket.respuesta3 = respuesta3
+                            ticket.save()
+
+                    if numTipo + 1 == 6:
+                        ticket = Tickets()
+                        ticket.numeroBox = box3
+                        auxiliarDisminuyeBox3 = boxesRestante3.objects.get(
+                            box=int(box3)
+                        )
+                        if auxiliarDisminuyeBox3.ocupado:
+                            error = "No queda el box: " + box3 + " ya fue comprado."
+                            break
+                        auxiliarDisminuyeBox3.ocupado = True
+                        auxiliarDisminuyeBox3.save()
+                        for _ in range(10):
+                            ticket = Tickets()
+                            ticket.ticket = generaNumeroTicket()
+                            ticket.estado = 1
+                            ticket.codigoseguridad = generacodigoseguridad()
+                            ticket.pin = pin
+                            ticket.fechaHoraCambio = timezone.now()
+                            ticket.celular = celular
+                            ticket.tipo = descripcionTipoEntrada
+                            ticket.numeroBox = box3
+                            ticket.cip = cip
+                            ticket.nombre = nombre
+                            ticket.correo = correo
+                            ticket.dni = dni
+                            ticket.pregunta1 = pregunta1
+                            ticket.pregunta2 = pregunta2
+                            ticket.pregunta3 = pregunta3
+                            ticket.respuesta1 = respuesta1
+                            ticket.respuesta2 = respuesta2
+                            ticket.respuesta3 = respuesta3
+                            ticket.save()
+
+                    for _ in range(int(entradasCantidad[numTipo])):
+                        if numTipo + 1 == 4:
+                            ticket.numeroBox = box1
+                            continue
+                        if numTipo + 1 == 5:
+                            ticket.numeroBox = box2
+                            continue
+                        if numTipo + 1 == 6:
+                            ticket.numeroBox = box3
+                            continue
+                        ticket = Tickets()
+                        ticket.ticket = generaNumeroTicket()
+                        ticket.estado = 1
+                        ticket.codigoseguridad = generacodigoseguridad()
+                        ticket.pin = pin
+                        ticket.fechaHoraCambio = timezone.now()
+                        ticket.celular = celular
+                        ticket.tipo = descripcionTipoEntrada
+                        ticket.numeroBox = "0"
+
+                        ticket.cip = cip
+                        ticket.nombre = nombre
+                        ticket.correo = correo
+                        ticket.dni = dni
+                        ticket.pregunta1 = pregunta1
+                        ticket.pregunta2 = pregunta2
+                        ticket.pregunta3 = pregunta3
+                        ticket.respuesta1 = respuesta1
+                        ticket.respuesta2 = respuesta2
+                        ticket.respuesta3 = respuesta3
+                        ticket.save()
+
+                if error != "ninguno":
+                    responseData = {
+                        "error": error,
+                    }
+                    return JsonResponse({"Mensaje": "Algo salio mal, intente nuevamente", "Estado": "Invalido"})
+                cip2 = str(cip)
+                responseData = {
+                    "cip": cip,
+                    "cip2": (cip2[0:3]+"-"+cip2[3:6]+"-"+cip2[6:9])
+                }
+                print(responseData)
+                print("Llega a compra redirect OK")
+                request.session["compra_redirect"] = "compra"
+                request.session["contexto"] = {
+                    "response": responseData,
+                    "entradas": entradasElegidas,
+                    "precioTotal": str(montoPagar),
+                }
+                return JsonResponse({"Mensaje": "Correcto", "Estado": "Valido"})
+
+def resumen(request):
+    print("Entra a resumen")
+    if request.method == "GET":
+        if request.session.get('compra_redirect', '') == "compra":
+            contexto = request.session.get('contexto', '')
+            return render(request, "resumenPage/resumenPage.html", contexto)
+        else:
+            return render(request, "empty/empty.html")
+    if request.method == "POST":
+        print("entra a post ")
+        if request.POST.get("comando") == "confirmarCompra":
+            print("POST confirmarCompra")
+            cipRecibo = request.POST.get("cip")
+
+            PagoxCIP = Pagos.objects.get(cip=cipRecibo)
+            fechahoraPREP = str(PagoxCIP.fechaHoraPREP)
+            # print(PagoxCIP.fechaHoraPREP)
+            campos = fechahoraPREP.split(" ")
+            fecha = campos[0]
+            hora = campos[1]
+            hora = hora.split("+")[0]
+            anho_CIP_PRE, mes_CIP_PRE, dia_CIP_PRE = map(int, fecha.split("-"))
+            hora_CIP_PRE, minuto_CIP_PRE, segundo_CIP_PRE = map(
+                int, map(float, hora.split(":"))
+            )
+
+            fechaHoraActual = timezone.now()
+            # print(fechaHoraActual)
+            campo_fecha_hora = timezone.datetime(
+                anho_CIP_PRE,
+                mes_CIP_PRE,
+                dia_CIP_PRE,
+                hora_CIP_PRE,
+                minuto_CIP_PRE,
+                segundo_CIP_PRE,
+                tzinfo=timezone.utc,
+            )
+            # print(campo_fecha_hora)
+            tiempo_pasado_2_minutos = campo_fecha_hora + timedelta(
+                minutes=10
+            )  # tiempo_pasado_2_horas = campo_fecha_hora + timedelta(hours=2)
+            # print(tiempo_pasado_2_minutos)
+            if fechaHoraActual >= tiempo_pasado_2_minutos:
+                print("Han pasado mas de 2 minutos desde 'campo_fecha_hora'.")
+                devolverEntradas(cipRecibo)
+                datosConfirmar = {
+                    "entradas": {},
+                }
+                print("Llega hasta redirect devolver Tickets")
+                responseData = {"estado": "Timeout"}
+                del request.session["compra_redirect"]
+                del request.session["contexto"]
+                return JsonResponse(responseData)
+
+            print("Han pasado menos de 2 minutos ")
+            confirmarPago(cipRecibo)
+            confirmarentradas(cipRecibo)
+
+            # disminuyeEntradas(cipRecibo)
+            entradasArgumento = armaEntradas(
+                cipRecibo
+            )  # Esperado tipo (Arreglo)[] con diccionarios como elementos {} de campos ["tipo_ticket"] y ["numero_ticket"]
+            datosConfirmar = {
+                "entradas": entradasArgumento,
+            }
+
+            request.session["compra_redirect"] = "tickets"
+            request.session["contexto"] = datosConfirmar
+            print("Llega hasta redirect confirmar Ticket")
+            # return redirect(request.path)
+            responseData = {"estado": "Confirmado"}
+            return JsonResponse(responseData)
+        elif request.POST.get("comando") == "cancelarCompra":
+            print("POST cancelarCompra")
+            cipRecibo = request.POST.get("cip")
+            devolverEntradas(cipRecibo)
+            del request.session["compra_redirect"]
+            del request.session["contexto"]
+            responseData = {"estado": "Cancelado"}
+            return JsonResponse(responseData)
+
+
+def tickets(request):
+    if request.method == "GET":
+        if request.session.get('compra_redirect', '') == "tickets":
+            contexto = request.session.get('contexto', '')
+            return render(
+                request, "ticketsCompradosPage/ticketsCompradosPage.html", contexto
+            )
+        else:
+            return render(request, "empty/empty.html")
+
+class comprarPage(View):
+    def get(self, request):
+        
         identifica_compra = request.session.get("compra_redirect", False)
         if identifica_compra:
             # print(request.session['compra_redirect'])
@@ -279,7 +717,7 @@ class comprarPage(View):
             return render(
                 request, "ticketsCompradosPage/ticketsCompradosPage.html", contexto
             )
-        return render(request, "comprarPage/comprarPage.html", datos)
+        
 
     def post(self, request):
         if request.method == "POST":
@@ -687,6 +1125,7 @@ class comprarPage(View):
                     responseData = {
                         "error": error,
                     }
+
                     request.session["compra_redirect"] = "compra"
                     request.session["contexto"] = {"response": responseData}
                     return redirect(request.path)
@@ -696,7 +1135,7 @@ class comprarPage(View):
                     "cip2": (cip2[0:3]+"-"+cip2[3:6]+"-"+cip2[6:9])
                 }
                 print(responseData)
-
+                print("Llega a compra redirect OK")
                 request.session["compra_redirect"] = "compra"
                 request.session["contexto"] = {
                     "response": responseData,
