@@ -384,7 +384,8 @@ class comprarPage(View):
                 responseData = {"data": "Codigo Incorrecto"}
                 if buscarCodigoEnBaseDatos(celular, codigoValidacionIngresado, 1):
                     print("Codigo Correcto!!!")
-                    responseData = {"data": "Codigo correcto"}
+                    responseData = {"Estado": "Valido"}
+                else: responseData = {"Estado": "Invalido"}
                 return JsonResponse(responseData)
 
             ##########################################################
