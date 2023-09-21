@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Entrada</title>
+</head>
+
+<body>
+    <style>
+        .ticket {
+            max-width: 1600px;
+            min-width: 1600px;
+            max-height: 746px;
+            min-height: 746px;
+            display: grid;
+        }
+
+        .qr {
+            max-width: 250px;
+            min-width: 250px;
+            max-height: 250px;
+            min-height: 250px;
+            margin-left: 1010px;
+            margin-top: 360px;
+            display: grid;
+            justify-content: start;
+            align-items: start;
+        }
+
+        .container {
+            display: grid;
+            max-width: 1600px;
+            min-width: 1600px;
+            max-height: 746px;
+            min-height: 746px;
+        }
+
+        .id-ticket {
+            margin-left: 570px;
+            margin-top: 460px;
+            display: grid;
+        }
+
+        .id-nombre {
+            margin-left: 0px;
+            margin-top: 600px;
+            display: grid;
+            justify-content: end;
+            width: 800px;
+        }
+    </style>
+    <div class="container">
+        {%if Tipo == "VIP"%}
+        <img class="ticket" src="{% static 'imagenes/entradaVIP.jpg' %}" />
+        {%elif Tipo == "GENERAL"%}
+        <img class="ticket" src="{% static 'imagenes/entradaGeneral.jpg' %}" />
+        {%endif%}
+        <img class="qr" src="{% static 'imagenes/qrDummy.png' %}" />
+        <div class="id-ticket">
+            <h1>{{ ID_Ticket }}</h1>
+        </div>
+        <div class="id-nombre">
+            <h1 style="display: flex-inline; text-align: end; justify-content: start;">{{ nombre_y_apellido }}</h1>
+        </div>
+    </div>
+    <!-- <div class="row">
+            <div class="col-12">
+                <img class="img-fluid" src="{% static 'imagenes/tuentrada.png' %}" alt="Cabecera">
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <h1 class="display-4">Entrada Nro: <strong>{{ ID_Ticket }}</strong></h1>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-6 text-center">
+                <img src="{% static 'imagenes/logomientrada.png' %}" alt="Código QR" class="img-fluid">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 mensaje">
+                <p class="message-text">* Los códigos QR se activarán 24 horas antes</p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <h1><strong>Cliente: </strong> {{ nombre_y_apellido }}</h1>
+            </div>
+        </div>
+
+        <hr class="linea-separacion">
+
+        <div class="row mt-2">
+            <div class="col-4 text-left">
+                <h3 class="font-weight-bold d-inline"><strong>DOCUMENTO: </strong></h3>
+                <span class="d-inline" style="font-size: 25px;">{{ dni }}</span>
+            </div>
+            <div class="col-4 text-center">
+                <h3 class="font-weight-bold d-inline"><strong>TELÉFONO: </strong></h3>
+                <span class="d-inline" style="font-size: 25px;">{{ telefono }}</span>
+            </div>
+            <div class="col-4 text-right">
+                <h3 class="font-weight-bold d-inline"><strong>WHATSAPP: </strong></h3>
+                <span class="d-inline" style="font-size: 25px;">{{ whatsapp }}</span>
+            </div>
+        </div>
+
+        <hr class="linea-separacion">
+
+        <div class="row mt-4">
+            <div class="col-12 text-left">
+                <h3 class="font-weight-bold d-inline"><strong>LUGAR: </strong></h3>
+                <span class="d-inline" style="font-size: 30px;">{{ Lugar }}</span>
+            </div>
+        </div>
+        <hr class="linea-separacion">
+        <div class="row">
+            <div class="col-12 text-left">
+                <h3 class="font-weight-bold d-inline"><strong>UBICACIÓN: </strong></h3>
+                <span class="d-inline" style="font-size: 30px;">{{ Ubicacion }}</span>
+            </div>
+        </div>
+
+        <hr class="linea-separacion">
+
+        <div class="row">
+            <div class="col-12 text-left">
+                <h3 class="font-weight-bold d-inline"><strong>FECHA: </strong></h3>
+                <span class="d-inline" style="font-size: 30px;">{{ fecha }}</span>
+            </div>
+        </div>
+
+        <hr class="linea-separacion">
+
+        <div class="row">
+            <div class="col-12 text-left">
+                <h3 class="font-weight-bold d-inline"><strong>HORA: </strong></h3>
+                <span class="d-inline" style="font-size: 30px;">{{ hora }}</span>
+            </div>
+        </div>
+
+        <hr class="linea-separacion">
+
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <h3 class="font-weight-bold d-inline"><strong>ZONA: </strong></h3>
+                <span class="d-inline" style="font-size: 30px;">{{ Zona }}</span>
+            </div>
+        </div>
+
+
+        <hr class="my-4">
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3 class="font-weight-bold"><strong>Recuerda:</strong></h3>
+                <p style="font-size: 30px; text-align: justify;">Llega unas horas antes del evento para ubicar
+                    correctamente tu zona. ¡Sin colas! Dirígete directamente a la puerta de entrada de tu zona. Muestra
+                    tu QR directamente desde tu celular, no es necesario imprimir.</p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3 class="font-weight-bold"><strong>Ubicación del evento:</strong></h3>
+                <p style="font-size: 30px; text-align: justify;">Si no encuentra la dirección del evento, puede
+                    dirigirse al enlace:</p>
+                <p style="font-size: 18px; text-align: justify; color: red;"><a>
+                        https://www.google.com/maps/search/centro+conveciones+el+pardo/@-3.7508029,-73.2560195,18.6z?authuser=0&entry=ttu</a>
+                </p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <h3 class="font-weight-bold" style="color: purple;"><strong>Estimado Cliente:</strong></h3>
+                <p style="font-size: 30px; text-align: justify;">Si tiene problemas con su entrada, escríbanos al
+                    WhatsApp 965 636 153, que lo ayudaremos inmediatamente.</p>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <img src="{% static 'imagenes/soloBordeInferior.png' %}" alt="Imagen fija" class="pie-pagina">
+            </div>
+        </div>
+        <hr class="my-4">
+    </div> -->
+</body>
+
+</html>
