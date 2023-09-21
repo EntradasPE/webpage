@@ -30,7 +30,7 @@ from django.views import View
 from .encripdecripEntradas import encriptador, desencriptador
 from .generaCodigoSeguridad import generacodigoseguridad
 import re
-
+from django.contrib.auth.decorators import login_required
 
 def reemplazar_letras(cadena):
     # Utilizar expresiones regulares para buscar palabras y reemplazar letras
@@ -68,7 +68,7 @@ def generar_qr_code_url(datoencriptado):
     qr.make(fit=True)
     qr_image = qr.make_image(fill="black", back_color="white")
     qr_buffer = io.BytesIO()
-    qr_image.save(qr_buffer, format="PNG")
+    qr_image.save(qr_buffer)
     qr_buffer.seek(0)
     return qr_buffer
 
@@ -114,6 +114,7 @@ def descargar_boleto(request, entrada_id):
             "fecha": "Domingo 25 de Junio 2023",
             "hora": "3:00 pm",
             "Zona": getattr(ticket_obj, "tipo", "No completado") + numeroBox,
+            "Tipo": getattr(ticket_obj, "tipo", "None"),
             #'qr_image': qr_url,
         }
 
@@ -127,8 +128,9 @@ def descargar_boleto(request, entrada_id):
     return HttpResponse(html_content)  # response
 
 
-def descargar_boletoQREncriptado(request, enlaceEncriptado):
-    entrada_id, dummycode = desencriptador(keyCrypto, enlaceEncriptado)
+def descargar_boletoQREncriptado(request, entrada_id):#enlaceEncriptado):
+    print(entrada_id)
+    entrada_id, dummycode = desencriptador(keyCrypto, entrada_id)#enlaceEncriptado)
     ticket_obj = Tickets.objects.get(ticket=entrada_id)
     codigoSeguridad = ticket_obj.codigoseguridad
     datoencriptado = encriptador(keyCrypto, entrada_id, codigoSeguridad)
@@ -167,6 +169,7 @@ def descargar_boletoQREncriptado(request, enlaceEncriptado):
         "hora": "3:00 pm",
         "Zona": getattr(ticket_obj, "tipo", "No completado") + numeroBox,
         "qr_imagen": qr_url,
+        "Tipo": getattr(ticket_obj, "tipo", "UKNWON"),
     }
     return render(request, "ticketsQR/plantillaentradaQR.html", contexto)
 
@@ -1419,7 +1422,7 @@ def administrarPage(request):
 
 keyCrypto = "1234567890abcdef"
 
-
+@login_required(login_url="login")
 def escanerPage(request):
     if request.method == "POST" and request.POST.get("comando") == "QRenviado":
         data = request.POST.get("data")
@@ -1436,6 +1439,8 @@ def escanerPage(request):
                 responseData = {
                     "estado": "Entrada usada",
                     "fecha": entrada.fechaHoraIngresoExitoso.astimezone(pytz.timezone('America/Lima')).strftime('%Y-%m-%d %H:%M:%S'),
+                    "zona": entrada.tipo,
+                    "numero": entrada.ticket
                 }
                 return JsonResponse(responseData)
             else:
@@ -1444,6 +1449,8 @@ def escanerPage(request):
                 entrada.save()
                 responseData = {
                     "estado": "Entrada Valida",
+                    "zona": entrada.tipo,
+                    "numero": entrada.ticket
                 }
                 return JsonResponse(responseData)
         except:
@@ -1473,13 +1480,30 @@ def descargarQRPage(request):
             enlaceEncriptado = encriptador(
                 keyCrypto, entrada.ticket, entrada.codigoseguridad
             )
-            print("OKA")
-            return descargar_boletoQREncriptado(request, enlaceEncriptado)
-        except:
-            print("NOPE")
+            return JsonResponse({"Estado":"Valido","Pagina": enlaceEncriptado})
+        except Exception as ex:
+            print("NOPE", str(ex))
             responseData = {"estado": "¡¡Datos invalidos!!"}
-            return render(request, "descargarQRPage/descargarQRPage.html", responseData)
     return render(request, "descargarQRPage/descargarQRPage.html", responseData)
     
 def loaderio_verification(request):
     return HttpResponse("loaderio-068c49c7628e466db6843e532472ccfa")
+
+from django.contrib.auth import authenticate, login, logout
+def login_view(request):
+    if request.method == "GET":
+        return render(request, "loginPage/index.html")
+    elif request.method == "POST":
+        usuario = request.POST.get("usuario", "")
+        contrasena = request.POST.get("contrasena", "")
+        user =  authenticate(
+                request, username=usuario, password=contrasena)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"Estado": "Valido"})
+        else:
+            return JsonResponse({"Mensaje": "Los datos no son válidos"})
+
+def signout(request):
+    logout(request)
+    return redirect('login')

@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from . import views
+from django.contrib.auth import views as auth_views
 from .views import comprarPage
 from .views import loaderio_verification
 #from django.conf.urls import url
@@ -9,8 +10,8 @@ urlpatterns = [
     path("", views.homePage, name="homePage"),
     #path("comprar/", comprarPage.as_view(), name="comprarPage"),
     path("comprar/", views.comprar, name="comprarPage"),
-    path("resumen/", views.resumen, name="comprarPage"),
-    path("tickets/", views.tickets, name="comprarPage"),
+    path("resumen/", views.resumen, name="resumenPage"),
+    path("tickets/", views.tickets, name="ticketsPage"),
     #path("resumen/", comprarPage.as_view(), name="comprarPage"),
     path("administrar/", views.administrarPage, name="administrarPage"),
     path('descargar_boleto/<entrada_id>/', views.descargar_boleto, name='descargar_boleto'),
@@ -19,9 +20,8 @@ urlpatterns = [
     path("escaner/", views.escanerPage, name="escanerPage"),
     path('descargar_boletoQREncriptado/<entrada_id>/', views.descargar_boletoQREncriptado, name='descargar_boletoQREncriptado'),
     path('qr', views.descargarQRPage, name='descargarQRPage'),
-    path('loaderio-068c49c7628e466db6843e532472ccfa.txt', loaderio_verification),
-    path('loaderio-068c49c7628e466db6843e532472ccfa.html', loaderio_verification),
-    path('loaderio-068c49c7628e466db6843e532472ccfa/', loaderio_verification),
+    path('signout', views.signout, name="signout"),
+    path("login/", views.login_view, name='login'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
