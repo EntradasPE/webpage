@@ -25,57 +25,7 @@
     </head>
 
     <body onload="" style="">
-        <img src="{% static 'imagenes/logosmall.png' %}" hidden />
-        <img src="{% static 'imagenes/trees.png' %}" hidden />
-        <div class="row justify-content-center align-items-center g-2 m-0 p-0">
-            <form id="comprarForm" class="row justify-content-center align-items-center g-2 m-0 p-0" autocomplete="off"
-                action="{% url 'comprarPage' %}" method="post">
-                {% csrf_token %}
-                <!-- Header -->
-                <div class="container-fluid row gradient-bg m-0 p-0">
-                    <div class="col-md-6 d-grid justify-content-center mt-3 mb-3">
-                        <img src="{% static 'imagenes/headerlogo.png' %}"
-                            style="width: 100%; min-width: 100px; max-width: 200px; cursor: pointer;"
-                            onclick="javascript:location.reload(true)" />
-                    </div>
-                </div>
-                <div class="container d-grid d-md-flex p-0 m-0" style="background-color: rgba(255,223,1,180);">
-                    <!-- Banner -->
-                    <div class="col-12 col-md-5 m-0 p-0">
-                        <div class="container-fluid row m-0 p-0 overflow-hidden d-flex justify-content-center"
-                            style="background: black;">
-                            <img class="p-0" id="banner-image" src="{% static 'comprarPage/images/folleto.jpg' %}"
-                                style="width: 100%; min-width: 300px;" />
-                        </div>
-                    </div>
-                    <!-- Zonas -->
-                    <div class="col-12 col-md-7 d-flex justify-content-center">
-                        <div class="container px-0 d-md-flex d-grid px-xxl-5 px-md-4 m-0 my-3"
-                            style="justify-content: stretch;">
-                            <div class="container d-grid">
-                                <div class="container d-grid border-round-5 justify-content-stretch"
-                                    id="containerEscenario" style="background-color: #ffffff55;">
-                                    <div class="row justify-content-center">
-                                        <button type="button" class="btn btn-primary mt-3"
-                                            style="width: 50%; min-height: 100px; background: black; border: none; font-size: 1.6em;">ESCENARIO</button>
-                                    </div>
-                                    <div class="row justify-content-center">
-                                        <button type="button" class="btn btn-primary mt-3" id="buttonVIP"
-                                            style="width: 80%; min-height: 100px;  background: rgba(253,176,0,255); border: none; font-size: 1.6em;"
-                                            onclick="elegirEntrada('VIP')">VIP
-                                            S/ 50</button>
-                                    </div>
-                                    <div class="row justify-content-center">
-                                        <button type="button" class="btn btn-primary mt-3 mb-3" id="buttonGeneral"
-                                            style="width: 80%; min-height: 200px;  background: rgba(0,199,66,255); border: none; font-size: 1.6em;"
-                                            onclick="elegirEntrada('GENERAL')">GENERAL
-                                            S/ 30</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        
                 <!-- Total a pagar -->
                 <div class=" container d-grid d-md-flex p-0 m-0 mt-3" style="background-color: white;">
                     <div class="container d-grid">
