@@ -250,12 +250,18 @@ def confirmarentradas(cipRecibo):
         ticket.save()
 
 def comprar(request):
+    print("Entro a comprar")
     if request.method == "GET":
+        print("entro a get 1")
         preguntas = Preguntas.objects.all()
         entradas = Tipos.objects.all().order_by("tipo")
+        print("entro a get 2")
         boxes1 = boxesRestante1.objects.order_by("box")
+        print("entro a get 3")
         boxes2 = boxesRestante2.objects.order_by("box")
+        print("entro a get 4")
         boxes3 = boxesRestante3.objects.order_by("box")
+        print("entro a get 5")
         datos = {
             "preguntas": preguntas,
             "entradas": entradas,
@@ -263,6 +269,7 @@ def comprar(request):
             "boxes2": boxes2,
             "boxes3": boxes3,
         }
+        print("entro a get 6")
         return render(request, "comprarPage/comprarPage.html", datos)
 
     elif request.method == "POST":
