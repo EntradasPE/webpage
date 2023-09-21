@@ -1,14 +1,70 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-control" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>entradaspe</title>
+    <title>Entrada</title>
 </head>
+
 <body>
-    dawdwd
+    <style>
+        .ticket {
+            max-width: 1600px;
+            min-width: 1600px;
+            max-height: 746px;
+            min-height: 746px;
+            display: grid;
+        }
+
+        .qr {
+            max-width: 240px;
+            min-width: 240px;
+            max-height: 240px;
+            min-height: 240px;
+            margin-left: 1166px;
+            margin-top: -311px;
+            display: grid;
+            justify-content: start;
+            align-items: start;
+        }
+
+        .container {
+            display: grid;
+            max-width: 1600px;
+            min-width: 1600px;
+            max-height: 746px;
+            min-height: 746px;
+        }
+
+        .id-ticket {
+            margin-left: 760px;
+            margin-top: -187px;
+            display: grid;
+        }
+
+        .id-nombre {
+            margin-left: 220px;
+            margin-top: -146px;
+            display: grid;
+            justify-content: end;
+            width: 800px;
+        }
+    </style>
+    <div class="container">
+        {%if Tipo == "VIP"%}
+        <img class="ticket" src="{% static 'imagenes/entradaVIP.jpg' %}" />
+        {%elif Tipo == "GENERAL"%}
+        <img class="ticket" src="{% static 'imagenes/entradaGeneral.jpg' %}" />
+        {%endif%}
+        <img class="qr" src="{{qr_imagen}}" />
+        <div class="id-ticket">
+            <h3>{{ ID_Ticket }}</h3>
+        </div>
+        <div class="id-nombre">
+            <h3 style="display: flex-inline; text-align: end; justify-content: start;">{{ nombre_y_apellido }}</h3>
+        </div>
+    </div>
 </body>
+
 </html>
