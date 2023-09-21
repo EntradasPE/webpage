@@ -5,8 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Entrada</title>
-</head>
-<style>
+    <style>
         .ticket {
             max-width: 1600px;
             min-width: 1600px;
@@ -49,22 +48,9 @@
             width: 800px;
         }
     </style>
+</head>
 <body>
-    
-    <div class="container">
-        {%if Tipo == "VIP"%}
-        <img class="ticket" src="{% static 'imagenes/entradaVIP.jpg' %}" />
-        {%elif Tipo == "GENERAL"%}
-        <img class="ticket" src="{% static 'imagenes/entradaGeneral.jpg' %}" />
-        {%endif%}
-        <img class="qr" src="{{qr_imagen}}" />
-        <div class="id-ticket">
-            <h3>{{ ID_Ticket }}</h3>
-        </div>
-        <div class="id-nombre">
-            <h3 style="display: flex-inline; text-align: end; justify-content: start;">{{ nombre_y_apellido }}</h3>
-        </div>
-    </div>
+    dawdwd
 </body>
 
 </html>
