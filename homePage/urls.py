@@ -15,6 +15,7 @@ urlpatterns = [
     #path("resumen/", comprarPage.as_view(), name="comprarPage"),
     path("administrar/", views.administrarPage, name="administrarPage"),
     path('descargar_boleto/<entrada_id>/', views.descargar_boleto, name='descargar_boleto'),
+    path('descargar_boleto2/<entrada_id>/', views.descargar_boleto2, name='descargar_boleto2'),
     #path('descargar_boleto/<int:entrada_id>/', views.descargar_boleto, name='descargar_boleto'),
     #path('descargar_boleto/(?P<entrada_id>\d+)/$', views.descargar_boleto, name='descargar_boleto'),
     path("escaner/", views.escanerPage, name="escanerPage"),

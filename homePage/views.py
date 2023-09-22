@@ -128,6 +128,61 @@ def descargar_boleto(request, entrada_id):
     return HttpResponse(html_content)  # response
 
 
+def descargar_boleto2(request, entrada_id):
+    try:
+        ticket_obj = Tickets.objects.get(ticket=entrada_id)
+
+        if getattr(ticket_obj, "numeroBox", "0") != "0":
+            numeroBox = " - Box " + getattr(ticket_obj, "numeroBox", "0")
+        else:
+            numeroBox = ""
+
+        if getattr(ticket_obj, "nombre", "No completado") != "No completado":
+            campoNombreApellido = reemplazar_letras(
+                getattr(ticket_obj, "nombre", "No completado")
+            )
+        else:
+            campoNombreApellido = "No completado"
+
+        if getattr(ticket_obj, "dni", "No completado") != "No completado":
+            campodni = reemplazar_ultimos_caracteres(
+                getattr(ticket_obj, "dni", "No completado")
+            )
+        else:
+            campodni = "No completado"
+
+        if getattr(ticket_obj, "celular", "No completado") != "No completado":
+            campocelular = reemplazar_ultimos_caracteres(
+                getattr(ticket_obj, "celular", "No completado")
+            )
+        else:
+            campocelular = "No completado"
+
+        context = {
+            "ID_Ticket": entrada_id,
+            "nombre_y_apellido": campoNombreApellido,
+            "dni": campodni,
+            "telefono": campocelular,
+            "whatsapp": campocelular,
+            "Lugar": "Centro Convenciones del Pardo",
+            "Ubicacion": "Calle Alzamora / Av. Mariscal Cáceres",
+            "fecha": "Domingo 25 de Junio 2023",
+            "hora": "3:00 pm",
+            "Zona": getattr(ticket_obj, "tipo", "No completado") + numeroBox,
+            "Tipo": getattr(ticket_obj, "tipo", "None"),
+            #'qr_image': qr_url,
+        }
+
+    except Tickets.DoesNotExist:
+        return HttpResponse(
+            "No se crearon los tickets correctamente o hubo problemas en la búsqueda"
+        )
+
+    html_content = render_to_string("entradas/plantillaentrada2.html", context)
+
+    return HttpResponse(html_content)  # response
+
+
 def descargar_boletoQREncriptado(request, entrada_id):#enlaceEncriptado):
     print(entrada_id)
     entrada_id, dummycode = desencriptador(keyCrypto, entrada_id)#enlaceEncriptado)
@@ -1248,19 +1303,20 @@ def administrarPage(request):
         request.method == "POST"
         and request.POST.get("comando") == "verificarBotonValidarTemplate"
     ):
-        numero = request.POST.get("ticket")
-        apellido = request.POST.get("cip")
-
+        numero = request.POST.get("ticket", "")
+        apellido = request.POST.get("apellido", "")
+        if(len(numero) != 12): return JsonResponse({"estado": "Faltan datos", "mensaje": "Debe ingresar un numero de ticket correcto"})
+        if(apellido == ""): return JsonResponse({"estado": "Faltan datos", "mensaje": "Debe ingresar un apellido"})
         try:
             ticket = Tickets.objects.get(ticket=numero, nombre__icontains=apellido)
             if ticket.estado == 3:
-                responseData = {"estado": "Ticket valido"}
+                responseData = {"estado": "Ticket valido", "mensaje": f"El ticket es valido, para la zona {ticket.tipo}"}
             elif ticket.estado == 2:
-                responseData = {"estado": "Ticket en validacion"}
+                responseData = {"estado": "Ticket en validacion", "mensaje": "El ticket se encuentra a la espera de pago"}
             else:
-                responseData = {"estado": "Ticket no valido"}
+                responseData = {"estado": "Ticket no valido", "mensaje": "El ticket no se encuentra registrado en la base de datos"}
         except Tickets.DoesNotExist or Tickets.MultipleObjectsReturned:
-            responseData = {"estado": "Ticket no valido"}
+            responseData = {"estado": "Ticket no valido", "mensaje": "El ticket no se encuentra registrado en la base de datos"}
         return JsonResponse(responseData)
 
     # Transferir
@@ -1268,55 +1324,46 @@ def administrarPage(request):
         request.method == "POST"
         and request.POST.get("comando") == "generarTransferencia"
     ):
-        entrada = request.POST.get("numeroEntrada")
-        dni = request.POST.get("dni")
-        celular = request.POST.get("celular")
-        pin = request.POST.get("pin")
+        entrada = request.POST.get("numeroEntrada", "")
+        dni = request.POST.get("dni", "")
+        celular = request.POST.get("celular", "")
+        pin = request.POST.get("pin", "")
+        if(len(entrada) != 12): return JsonResponse({"titulo": "Error", "mensaje": "La entrada no tiene el formato correcto"})
+        if(len(dni) != 8): return JsonResponse({"titulo": "Error", "mensaje": "El DNI debe tener 8 digitos"})
+        if(len(celular) != 9): return JsonResponse({"titulo": "Error", "mensaje": "El numero de celular debe tener 9 digitos"})
+        if(len(pin) < 6 or 10 < len(pin)): return JsonResponse({"titulo": "Error", "mensaje": "El pin debe tener de 6 a 10 digitos"})
         print("ENTRADA: ", entrada, "DNI: ", dni, "CELULAR: ", celular, "PIN: ", pin)
-        if (
-            entrada == None
-            or dni == None
-            or celular == None
-            or pin == None
-            or len(entrada) == 0
-            or len(dni) == 0
-            or len(celular) == 0
-            or len(pin) == 0
-        ):
-            responseData = {"estado": "Llenar datos"}
-        else:
-            try:
-                ticket1 = Tickets.objects.get(
-                    ticket=entrada,
-                    dni=dni,
-                    pin=pin,
-                    celular=celular,
-                    estado=3,
-                    fechaHoraIngresoExitoso=None,
-                    intentosIngresoOK=0,
-                )
-                print("a")
-                if (
-                    ticket1.codigoTransferencia == None
-                    or len(ticket1.codigoTransferencia) != 8
-                ):
-                    print("b")
-                    ticket1.codigoTransferencia = generacodigoseguridad()
-                    ticket1.save()
-                    responseData = {
-                        "estado": "Correcto",
-                        "codigo": ticket1.codigoTransferencia,
-                    }
-
-                else:
-                    print("c")
-                    responseData = {
-                        "estado": "Correcto",
-                        "codigo": ticket1.codigoTransferencia,
-                    }
-            except:
-                print("excepcion")
-                responseData = {"estado": "No encontrado"}
+        try:
+            ticket1 = Tickets.objects.get(
+                ticket=entrada,
+                dni=dni,
+                pin=pin,
+                celular=celular,
+                estado=3,
+                fechaHoraIngresoExitoso=None,
+                intentosIngresoOK=0,
+            )
+            print("a")
+            if (
+                ticket1.codigoTransferencia == None
+                or len(ticket1.codigoTransferencia) != 8
+            ):
+                print("b")
+                ticket1.codigoTransferencia = generacodigoseguridad()
+                ticket1.save()
+                responseData = {
+                    "titulo": ticket1.codigoTransferencia,
+                    "mensaje": "Con este codigo generado puede transferir su entrada.",
+                }
+            else:
+                print("c")
+                responseData = {
+                    "titulo": ticket1.codigoTransferencia,
+                    "mensaje": "Con este codigo generado puede transferir su entrada.",
+                }
+        except:
+            print("excepcion")
+            responseData = {"titulo": "No encontrado", "mensaje": "Revise bien los datos ingresados"}
         return JsonResponse(responseData)
 
     # RecibirPage
@@ -1332,7 +1379,7 @@ def administrarPage(request):
             or dniTransferencia == None
             or len(codigoTransferencia) != 8
         ):
-            responseData = {"estado": "Incorrecto"}
+            responseData = {"estado": "Incorrecto", "titulo": "Error", "mensaje": "Debe llenar los datos correctamente"}
         else:
             try:
                 ticket1 = Tickets.objects.get(
@@ -1343,10 +1390,10 @@ def administrarPage(request):
                 tipoEntrada = ticket1.tipo
                 if ticket1.numeroBox != "0":
                     tipoEntrada = ticket1.tipo + " - Box " + ticket1.numeroBox
-                responseData = {"estado": "Correcto", "tipoEntrada": tipoEntrada}
+                responseData = {"estado": "Correcto", "titulo": "Datos correctos" ,"mensaje": f"Su entrada a recibir es {tipoEntrada}"}
             except:
                 print("excepcion")
-                responseData = {"estado": "Incorrecto"}
+                responseData = {"estado": "Incorrecto", "titulo": "Datos incorrectos" ,"mensaje": f"Verifique los datos ingresados"}
         return JsonResponse(responseData)
     if request.method == "POST" and request.POST.get("comando") == "solicitarCodigo":
         print("Boton SMS presionado")
@@ -1374,55 +1421,51 @@ def administrarPage(request):
             responseData = {"estado": "Correcto"}
         return JsonResponse(responseData)
 
-    if request.method == "POST" and request.POST.get("boton") == "transferirEntrada":
-        codigoTransferencia = request.POST.get("codigoTransferencia")
-        dniTransferencia = request.POST.get("dniTransferencia")
-        celular = request.POST.get("celular")
-        dni = request.POST.get("dni")
-        nombre = request.POST.get("nombre")
-        pin = request.POST.get("pin")
-        correo = request.POST.get("correo")
-        pregunta1 = request.POST.get("pregunta1")
-        pregunta2 = request.POST.get("pregunta2")
-        pregunta3 = request.POST.get("pregunta3")
-        respuesta1 = request.POST.get("respuesta1")
-        respuesta2 = request.POST.get("respuesta2")
-        respuesta3 = request.POST.get("respuesta3")
-        print("CODIGO: ", codigoTransferencia, "DNI: ", dniTransferencia)
-        print("Nuevos datos:", celular, dni, nombre, pin)
-        if (
-            codigoTransferencia == None
-            or dniTransferencia == None
-            or len(codigoTransferencia) != 8
-        ):
-            return render(request, "administrarPage.html")
-        else:
-            try:
-                ticketNuevo = Tickets.objects.get(
-                    codigoTransferencia=codigoTransferencia, dni=dniTransferencia
-                )
-                entrada = ticketNuevo.ticket
-                ticketNuevo.nombre = nombre
-                ticketNuevo.fechaHoraCambio = timezone.now()
-                ticketNuevo.codigoseguridad = generacodigoseguridad()
-                ticketNuevo.pin = pin
-                ticketNuevo.dni = dni
-                ticketNuevo.celular = celular
-                ticketNuevo.codigoTransferencia = ""
-                ticketNuevo.codigoDescarga = ""
-                ticketNuevo.correo = correo
-                ticketNuevo.pregunta1 = pregunta1
-                ticketNuevo.pregunta2 = pregunta2
-                ticketNuevo.pregunta3 = pregunta3
-                ticketNuevo.respuesta1 = respuesta1
-                ticketNuevo.respuesta2 = respuesta2
-                ticketNuevo.respuesta3 = respuesta3
-                ticketNuevo.save()
-                print("oktry")
-                return redirect("/descargar_boleto/" + entrada)
-            except:
-                print("excepcion")
-                return render(request, "administrarPage.html")
+    if request.method == "POST" and request.POST.get("comando") == "transferirEntrada":
+        codigoTransferencia = request.POST.get("codigoTransferencia","")
+        dniTransferencia = request.POST.get("dniTransferencia","")
+        celular = request.POST.get("celular","")
+        dni = request.POST.get("dni","")
+        nombre = request.POST.get("nombre","")
+        pin = request.POST.get("pin","")
+        correo = request.POST.get("correo","")
+        pregunta1 = request.POST.get("pregunta1","")
+        pregunta2 = request.POST.get("pregunta2","")
+        pregunta3 = request.POST.get("pregunta3","")
+        respuesta1 = request.POST.get("respuesta1","")
+        respuesta2 = request.POST.get("respuesta2","")
+        respuesta3 = request.POST.get("respuesta3","")
+        if(len(codigoTransferencia) != 8): return JsonResponse({"titulo": "Error", "mensaje": "No ha ingresado un codigo de transferencia"})
+        if(len(celular) != 9): return JsonResponse({"titulo": "Error", "mensaje": "No ha ingresado un numero de celular valido"})
+        if(len(dni) != 8): return JsonResponse({"titulo": "Error", "mensaje": "No ha ingresado un DNI valido"})
+        if(len(nombre) == 0): return JsonResponse({"titulo": "Error", "mensaje": "No ha ingresado un nombre valido"})
+        if(len(pin) < 6 or 10 < len(pin)): return JsonResponse({"titulo": "Error", "mensaje": "No ha ingresado PIN valido"})
+        print(codigoTransferencia, dniTransferencia)
+        try:
+            ticketNuevo = Tickets.objects.get(
+                codigoTransferencia=codigoTransferencia, dni=dniTransferencia
+            )
+            entrada = ticketNuevo.ticket
+            ticketNuevo.nombre = nombre
+            ticketNuevo.fechaHoraCambio = timezone.now()
+            ticketNuevo.codigoseguridad = generacodigoseguridad()
+            ticketNuevo.pin = pin
+            ticketNuevo.dni = dni
+            ticketNuevo.celular = celular
+            ticketNuevo.codigoTransferencia = ""
+            ticketNuevo.codigoDescarga = ""
+            ticketNuevo.correo = correo
+            ticketNuevo.pregunta1 = pregunta1
+            ticketNuevo.pregunta2 = pregunta2
+            ticketNuevo.pregunta3 = pregunta3
+            ticketNuevo.respuesta1 = respuesta1
+            ticketNuevo.respuesta2 = respuesta2
+            ticketNuevo.respuesta3 = respuesta3
+            ticketNuevo.save()
+            print("oktry")
+            return JsonResponse({"estado": "Correcto", "titulo": "Entrada recibida", "mensaje": "Su ticket se descarga en unos instantes" , "url": f"/descargar_boleto2/{entrada}/", "nombre": f"{entrada}"})
+        except Exception as ex:
+            return JsonResponse({"titulo": "Error", "mensaje": f"Error interno, intente nuevamente, {str(ex)}"})
 
     return render(request, "administrarPage.html")
 
