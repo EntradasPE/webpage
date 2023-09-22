@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Administrar - entradaspe{% endblock %}
+{% block content %}
+<style>
+    body {
+        background: #f1f1f1;
+    }
+</style>
+<form if="pForm" class="col-12 d-grid" action="{% url 'administrarPage' %}" method="post">
+    {%csrf_token%}
+    <div class="col-12 text-center h1 text-poppins-500" style="margin-top: 80px;">DESCARGA TU ENTRADA</div>
+    <div class="col-12 d-grid col-md-6 col-xl-4 p-2 px-md-3 px-xl-5 mt-3 border-round-5 bg-white"
+        style="justify-self: center;">
+        <div class="col-12 d-grid">
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputEntrada" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-ticket-alt"></i>&nbsp;Numero de entrada</label>
+                    <input type="text" class="form-control text-center" id="inputEntrada" maxlength="12"
+                        inputmode="numeric" aria-describedby="entradaHelp" placeholder="001001-00001"
+                        onkeyup="filtrarNumeros('inputEntrada')">
+                    <div id="entradaHelp" class="form-text">Ingrese su numero de entrada.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputCodigo" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-id-card"></i>&nbsp;Codigo de descarga</label>
+                    <input type="text" class="form-control text-center" id="inputCodigo" maxlength="6" inputmode="text"
+                        aria-describedby="codigoHelp" placeholder="A1B2C3"
+                        onkeyup="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();">
+                    <div id="codigoHelp" class="form-text">Ingrese su codigo de descarga enviado a su celular.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputPIN" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-mobile-alt"></i>&nbsp;PIN</label>
+                    <input type="text" class="form-control text-center" id="inputPIN" maxlength="10" inputmode="numeric"
+                        aria-describedby="pinHelp" placeholder="******" onkeyup="filtrarNumeros2('inputPIN')">
+                    <div id="pinHelp" class="form-text">Ingrese su PIN de seguridad.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-center my-3">
+                <button type="button" class="btn btn-success btn-lg text-white" style="font-size: 2em;"
+                    id="buttonOpcionales" onclick="consultarTicket()">Descargar</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'descargarQRPage/script.js' %}"></script>
+<script src="{% static 'transferirPage/script.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+{% endblock%}

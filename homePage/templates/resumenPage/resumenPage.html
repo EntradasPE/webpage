@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Validar - entradaspe{% endblock %}
+{% block content %}
+{%csrf_token%}
+<style>
+    body {
+        background: #ffffff;
+    }
+
+    .ConfirmarBoton {
+        display: flex;
+        justify-self: center;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-color: #FF0043;
+        height: 50px;
+        width: 150px;
+        border-radius: 15px;
+    }
+
+    .ConfirmarBoton:hover {
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    .CancelarBoton {
+        display: flex;
+        justify-self: center;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        background-color: #FF0043;
+        height: 50px;
+        width: 150px;
+        border-radius: 15px;
+    }
+
+    .CancelarBoton:hover {
+        opacity: 0.8;
+        cursor: pointer;
+    }
+
+    .TimerClass {
+        justify-self: center;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        height: 40px;
+        width: 70%;
+        margin-left: 15%;
+        display: flex;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1em;
+        background-color: var(--red);
+        border-radius: 12px;
+        border-width: 2px;
+        justify-content: center;
+        align-items: center;
+        z-index: 999;
+    }
+
+    .TimerClass i {
+        color: var(--white);
+    }
+
+    .TimerClass p {
+        margin-left: 15px;
+        color: var(--white);
+    }
+</style>
+<div class="col-12 d-grid mx-0 p-0" style="margin-top: 45px; margin-bottom: 50px;">
+    <div class="col-12 p-0 m-0 d-grid d-xl-flex justify-content-xl-center">
+        <!-- Resuemn -->
+        <div class="col-12 col-sm-7 col-md-5 col-xl-3 col-xl-2 px-0 mx-xl-2 m-0"
+            style="background-color: #f1f1f1; justify-self: center; height: calc(100vh - 50px - 50px);">
+            <div class="col-12 p-0 m-0">
+                <img src="{% static 'imagenes/item2.jpg' %}" style="width:100%" />
+            </div>
+            <div class="col-12 m-0 p-1 my-2">
+                <p class="h3 m-0 p-0 text-center text-poppins-500">Resumen de compra</p>
+            </div>
+            <div class="col-12 m-0 p-1 my-2">
+                <p class="h5 m-0 p-0 text-center text-poppins-500">CLUB SOCIAL EL HUARALINO</p>
+            </div>
+            <div class="col-12 p-2 d-grid my-2">
+                <div class="col-12 m-0 p-0 d-flex">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <p class="h6 m-0 p-0 text-poppins-500 text-start ms-1">Ovalo Naranjal Panamericana Norte - Lima
+                    </p>
+                </div>
+                <div class="col-12 m-0 p-0 d-flex my-2">
+                    <i class="fas fa-calendar-alt"></i>
+                    <p class="h6 m-0 p-0 text-poppins-500 text-start ms-1">Sabado 23 de Sep 2023
+                    </p>
+                </div>
+                <div class="col-12 m-0 p-0 d-flex my-2">
+                    <i class="fas fa-clock"></i>
+                    <p class="h6 m-0 p-0 text-poppins-500 text-start ms-1">Hora de inicio 9:00pm
+                    </p>
+                </div>
+
+            </div>
+            <div class="col-12 p-2 border-top">
+                <p class="h3 text-poppins-500 text-center">ENTRADAS</p>
+            </div>
+            <div class="col-12 p-2 my-2 px-4 d-grid">
+                {% for key, value in entradas.items %}
+                <div class="col-12 m-0 p-0 d-flex align-items-center">
+                    <i class="fas fa-circle col-2"></i>
+                    <p id="Nombre{{key}}" class="h6 m-0 p-0 col-8"><b>{{ value.id }}</b>
+                    </p>
+                    <p class="h6 m-0 p-0 col-2">× {{ value.cantidad }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-12 my-2 p-0">
+                <div class="TimerClass">
+                    <i class="fas fa-clock"></i>
+                    <p id="timeout" class="m-0 ms-1" name="timeout">09:59</p>
+                </div>
+            </div>
+            <div class="col-12 d-flex my-2 p-0" id="containerConfirmarCancelar">
+                <div class="col-6 d-grid justify-content-center">
+                    <div class="ConfirmarBoton" onclick="confirmarPre()">CONFIRMAR</div>
+                </div>
+                <div class="col-6 d-grid justify-content-center">
+                    <div class="CancelarBoton" onclick="cancelarPre()">CANCELAR</div>
+                </div>
+            </div>
+        </div>
+        <!-- Info de pago -->
+        <div class="col-12 col-xl-7 col-xl-6 px-0 px-xl-2 d-none" id="columnaPago">
+            <div class="col-12 border-round-5 my-3 d-grid p-1" style="justify-self: center;">
+                <div class="col-12">
+                    <p class="h1 text-center m-0 p-0 text-poppins-500">INFORMACION DE PAGO</p>
+                </div>
+                <div class="col-12 col-md-10 d-grid" style="background-color: #e1e1e1;justify-self: center;">
+                    <p class="h5 text-center m-0 p-0 text-poppins-500">Empresa: LUZ LIA JULCA DIAZ</p>
+                </div>
+                <div class="col-12 col-md-10 d-flex" style="background-color: #e1e1e1;justify-self: center;">
+                    <div class="col-6 d-grid align-items-center" style="background-color: var(--red);">
+                        <div class="col-12 d-grid">
+                            <div class="col-12 d-flex align-items-center justify-content-center"
+                                style="justify-self: center; color: white;">
+                                <p class="text-center m-0">Con este codigo <b
+                                        style="padding-left: 5px; padding-right: 5px;"><u>CIP</u> </b>
+                                    page su
+                                    entrada</p>
+                            </div>
+                            <div class="col-12 d-flex align-items-center justify-content-center">
+                                <i class="far fa-copy h4 m-0 text-white btn" id="copiarCIP"
+                                    onclick="copiarAlPortapapeles('{{response.cip}}')">Copiar</i>
+                                <p class="h4 m-0 ms-1 text-white">{{response.cip2}}</p>
+                            </div>
+                            <input hidden id="cip" name="cip" value="{{response.cip}}">
+                        </div>
+                    </div>
+                    <div class="col-6 d-grid align-items-center" style="background-color: var(--morado);">
+                        <div class="col-12 d-grid">
+                            <div class="col-12 d-flex align-items-center justify-content-center"
+                                style="justify-self: center; color: white;">
+                                <p class="text-center m-0">Monto a pagar</p>
+                            </div>
+                            <div class="col-12 d-flex align-items-center justify-content-center">
+                                <p class="h4 m-0 ms-1 text-white">S/.
+                                    {{precioTotal}}.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-grid my-2" style="justify-self: center;">
+                    <div class="col-12">
+                        <p class="m-0 h2 text-poppins-500">Pagar con:</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-grid my-2" style="justify-self: center;">
+                    <div class="col-12 d-flex">
+                        <div class="col-6 d-grid justify-content-center align-items-center">
+                            <img class="qrimage" src="{% static 'imagenes/qrDummy.png' %}"
+                                style="min-width: 70px; max-width: 150px; width: 100%; height: auto;" />
+                        </div>
+                        <div class="col-6 d-grid">
+                            <div class="col-12 d-flex align-items-center">
+                                <div class="col-6 d-grid justify-content-center">
+                                    <img style="border-radius: 10px;" src="{% static 'imagenes/yapeicon.png' %}"
+                                        width="50px" />
+                                </div>
+                                <div class="col-6 d-grid justify-content-center">
+                                    <img style="border-radius: 10px;" src="{% static 'imagenes/plinicon.png' %}"
+                                        width="50px" />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="container text-center m-1 my-3 p-0 border-round-5"
+                                    style="background-color: var(--red);">
+                                    <i class="far fa-copy btn m-0 text-white" style="padding-right: 5px;"
+                                        onclick="copiarAlPortapapeles('992415092')"> Copiar</i>
+                                    <p class="m-0 h5 text-white">992 415 092</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-12 col-md-10 d-grid my-2" style="justify-self: center;">
+                    <div>
+                        <p style="font-size: 14px; margin-top: -5px;"><b>1.</b> Ingresa a Yape o Plin.</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>2.</b> Coloca el número 992 415 092.</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>3.</b> Ingresa el monto a pagar</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>4.</b> <b>MUY IMPORTANTE</b>, agregar
+                            mensaje
+                            indicando el codigo
+                            CIP de
+                            pago.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-grid my-2" style="justify-self: center;">
+                    <div class="col-12">
+                        <p class="m-0 h2 text-poppins-500">Pagar con:</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-flex my-2" style="justify-self: center;">
+                    <div class="col-9 d-flex justify-content-end">
+                        <div class="container m-0 p-2 d-flex border-round-5 justify-content-center align-items-center"
+                            style="background-color: var(--red);">
+                            <p class="m-0 text-white h6 text-center">CC BCP: 191-73503065-0-18</p>
+                            <i class="far fa-copy text-white m-0 ms-1 h6 text-center btn"
+                                onclick="copiarAlPortapapeles('19173503065018')">
+                                Copiar</i>
+                        </div>
+                    </div>
+                    <div class="col-3 d-flex justify-content-center">
+                        <img style="border-radius: 10px;" src="{% static 'imagenes/bcpicon.png' %}" width="50px" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-grid my-2" style="justify-self: center;">
+                    <div>
+                        <p style="font-size: 14px; margin-top: -5px;"><b>1.</b> Ingresa a la app de tu banco.
+                        </p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>2.</b> Coloca el numero de cuenta
+                            corriente
+                            o
+                            interbancaria.</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>3.</b> Ingresa el monto a pagar</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 14px;margin-top: -5px;"><b>4.</b> <b>MUY IMPORTANTE</b>, agregar
+                            mensaje
+                            indicando el codigo
+                            CIP de
+                            pago.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-10 d-flex my-2" style="justify-self: center;">
+                    <div class="col-12 d-grid justify-content-center">
+                        <div class="ConfirmarBoton" onclick="confirmar()">CONTINUAR</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{%block scripts%}
+<script src="{% static 'resumenPage/script.js' %}"></script>
+{% endblock %}

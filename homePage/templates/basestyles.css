@@ -1,0 +1,72 @@
+:root {
+    --red: #FF0043;
+    --white: #ffffff;
+    --verde: #07A781;
+    --morado: #7643F6;
+    --negro: #000000;
+    --gris: #858484;
+    --yelow: #d9e806;
+    --azul: #01A0E2;
+    --rosado: #EC1074;
+    --naraja: #F9970E;
+}
+
+
+.header {
+    background: linear-gradient(to right, var(--red), var(--negro));
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    height: 45px;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    z-index: 9999;
+}
+
+.footer {
+    background: linear-gradient(to right, var(--red), var(--negro));
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.2);
+    height: 45px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    grid-template-columns: 1fr;
+    display: grid;
+    justify-content: right;
+}
+
+.border-round-5 {
+    border-radius: 15px;
+    border-color: var(--red);
+    border-style: solid;
+    border-width: 5px;
+}
+
+.text-poppins-500 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    /* text-shadow: 0px 0 black, 0 0px black, 0px 0 black, 0 -0px black; */
+}
+
+.custom-effect:hover {
+    cursor: pointer;
+}
+
+.custom-effect:active {
+    opacity: 0.5;
+}
+
+@media (min-width: 1400px) {
+    .px-xxl-15 {
+        padding-right: 15rem !important;
+        padding-left: 15rem !important;
+    }
+}
+
+@media (max-width: 568px) {
+    .txt-md-07 {
+        font-size: 0.7em;
+    }
+}

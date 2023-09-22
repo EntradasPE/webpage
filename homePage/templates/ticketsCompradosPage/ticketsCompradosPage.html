@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Administrar - entradaspe{% endblock %}
+{% block content %}
+<div class="col-12 m-0 my-5 d-grid">
+    {% csrf_token %}
+    <div class="col-12 text-center h1 m-0 my-3">
+        TICKETS COMPRADOS
+    </div>
+    <div class="col-12 col-md-6 p-1 d-grid" style="justify-self: center;">
+        {% for entrada in entradas %}
+        {%if entrada.tipo_ticket == "VIP" %}
+        <div class="col-12 col-md-6 col-xl-4 m-0 my-2 p-0 d-grid" style="justify-self: center;">
+            <div class="col-12 m-0 p-1 btn btn-success btn-lg"
+                onclick="download2('{{ entrada.numero_ticket}}', '{{ forloop.counter }}')">
+                <div class="text-poppins-500 text-center h3">{{ entrada.tipo_ticket }}</div>
+                <div class="text-poppins-500 text-center h5">{{entrada.numero_ticket}}</div>
+                <i id="download{{ entrada.numero_ticket}}" class="fas fa-download text-center"
+                    data-url="{% url 'descargar_boleto2' entrada.numero_ticket %}"></i>
+            </div>
+        </div>
+        {%elif entrada.tipo_ticket == "General" %}
+        <div class="col-12 col-md-6 col-xl-4 m-0 my-2 p-0 d-grid" style="justify-self: center;">
+            <div class="col-12 m-0 p-1 btn btn-primary btn-lg"
+                onclick="download2('{{ entrada.numero_ticket}}', '{{ forloop.counter }}')">
+                <div class="text-poppins-500 text-center h3">{{ entrada.tipo_ticket }}</div>
+                <div class="text-poppins-500 text-center h5">{{entrada.numero_ticket}}</div>
+                <i id="download{{ entrada.numero_ticket}}" class="fas fa-download text-center"
+                    data-url="{% url 'descargar_boleto2' entrada.numero_ticket %}"></i>
+            </div>
+        </div>
+        {%else %}
+        <div class="col-12 col-md-6 col-xl-4 m-0 my-2 p-0 d-grid" style="justify-self: center;">
+            <div class="col-12 m-0 p-1 btn btn-primary btn-lg"
+                onclick="download2('{{ entrada.numero_ticket}}', '{{ forloop.counter }}')">
+                <div class="text-poppins-500 text-center h3">{{ entrada.tipo_ticket }}</div>
+                <div class="text-poppins-500 text-center h5">{{entrada.numero_ticket}}</div>
+                <i id="download{{ entrada.numero_ticket}}" class="fas fa-download text-center"
+                    data-url="{% url 'descargar_boleto2' entrada.numero_ticket %}"></i>
+            </div>
+        </div>
+        {%endif%}
+        {%endfor%}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'ticketsCompradosPage/script.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock%}

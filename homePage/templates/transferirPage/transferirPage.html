@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Administrar - entradaspe{% endblock %}
+{% block content %}
+<style>
+    body {
+        background: #f1f1f1;
+    }
+</style>
+<form if="pForm" class="col-12 d-grid" action="{% url 'administrarPage' %}" method="post">
+    {%csrf_token%}
+    <div class="col-12 text-center h1 text-poppins-500" style="margin-top: 80px;">TRANSFIERE TU ENTRADA</div>
+    <div class="col-12 d-grid col-md-6 col-xl-4 p-2 px-md-3 px-xl-5 mt-3 border-round-5 bg-white"
+        style="justify-self: center;">
+        <div class="col-12 d-grid">
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputEntrada" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-ticket-alt"></i>&nbsp;Numero de entrada</label>
+                    <input type="text" class="form-control text-center" id="inputEntrada" maxlength="12"
+                        inputmode="numeric" aria-describedby="entradaHelp" placeholder="001001-00001"
+                        onkeyup="filtrarNumeros('inputEntrada')">
+                    <div id="entradaHelp" class="form-text">Ingrese su numero de entrada.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputDNI" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-id-card"></i>&nbsp;DNI</label>
+                    <input type="text" class="form-control text-center" id="inputDNI" maxlength="8" inputmode="numeric"
+                        aria-describedby="dniHelp" placeholder="12345678" onkeyup="filtrarNumeros2('inputDNI')">
+                    <div id="dniHelp" class="form-text">Ingrese su numero de DNI.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputCelular" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-mobile-alt"></i>&nbsp;Numero de celular</label>
+                    <input type="text" class="form-control text-center" id="inputCelular" maxlength="9"
+                        inputmode="numeric" aria-describedby="celularHelp" placeholder="987654321"
+                        onkeyup="filtrarNumeros2('inputCelular')">
+                    <div id="celularHelp" class="form-text">Ingrese su numero de celular.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputPIN" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-lock"></i>&nbsp;PIN</label>
+                    <input type="text" class="form-control text-center" id="inputPIN" maxlength="10" inputmode="numeric"
+                        aria-describedby="pinHelp" placeholder="******" onkeyup="filtrarNumeros2('inputPIN')">
+                    <div id="pinHelp" class="form-text">Ingrese su PIN.
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-center my-3">
+                <button type="button" class="btn btn-success btn-lg text-white" style="font-size: 2em;"
+                    id="buttonOpcionales" onclick="enviarFormulario()">Transferir entrada</button>
+            </div>
+
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'transferirPage/script.js' %}"></script>
+{% endblock%}

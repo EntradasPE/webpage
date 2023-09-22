@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Administrar - entradaspe{% endblock %}
+{% block content %}
+<style>
+    body {
+        background: #f1f1f1;
+    }
+</style>
+<form if="pForm" class="col-12 d-grid" action="{% url 'administrarPage' %}" method="post">
+    {%csrf_token%}
+    <div class="col-12 text-center h1 text-poppins-500" style="margin-top: 80px;">ADMINISTRAR ENTRADAS</div>
+    <div class="col-12 d-grid col-md-6 col-xl-4 p-2 px-md-3 px-xl-5 mt-3 border-round-5 bg-white"
+        style="justify-self: center;">
+        <div class="col-12 d-grid">
+            <div class="col-12">
+                <button class="btn btn-outline-danger col-12 my-3" type="submit" name="submit" value="validar"
+                    style="font-size: 1.5em;">Valida tu
+                    entrada</button>
+            </div>
+
+            <div class="col-12">
+                <button class="btn btn-outline-danger col-12 my-3" type="submit" name="submit" value="transferir"
+                    style="font-size: 1.5em;">Transfiere tu
+                    entrada</button>
+            </div>
+
+            <div class="col-12">
+                <button class="btn btn-outline-danger col-12 my-3" type="submit" name="submit" value="recibir"
+                    style="font-size: 1.5em;">Recibe tu
+                    transferencia</button>
+            </div>
+
+            <div class="col-12">
+                <a class="btn btn-outline-danger col-12 my-3"
+                    style="text-decoration: none; justify-content: center; align-items: center; display: flex; font-size: 1.5em;"
+                    href="/qr">Descarga tu QR</a>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

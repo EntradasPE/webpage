@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Validar - entradaspe{% endblock %}
+{% block content %}
+{%csrf_token%}
+<style>
+    body {
+        background: #f1f1f1;
+    }
+</style>
+<div class="col-12 d-grid" id="containerPrimario" style="margin-top: 80px; margin-bottom: 80px;">
+    <div class="col-12 text-center h1 text-poppins-500">RECIBE TU
+        TRANSFERENCIA</div>
+    <div class="col-12 d-grid col-md-6 col-xl-4 p-2 px-md-3 px-xl-5 mt-3 border-round-5 bg-white"
+        style="justify-self: center;">
+        <div class="col-12 d-grid">
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputCodigo" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-ticket-alt"></i>&nbsp;Codigo de transferencia</label>
+                    <input type="text" class="form-control text-center" id="inputCodigo" maxlength="8"
+                        inputmode="numeric" aria-describedby="codigoHelp" placeholder="A1B2C3D4"
+                        onkeyup="this.value = this.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase();">
+                    <div id="codigoHelp" class="form-text">Ingrese el codigo de transferencia de la entrada a recibir.
+                    </div>
+                </div>
+
+                <div class="mt-3 text-poppins-500 d-grid col-12" id="" style="justify-self: center;">
+                    <label for="inputDNIa" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-id-card"></i>&nbsp;DNI del cliente anterior</label>
+                    <input type="text" class="form-control text-center" id="inputDNIa" aria-describedby="dniaHelp"
+                        inputmode="text" placeholder="12345678" maxlength="8"
+                        onkeyup="this.value = this.value.replace(/\D/g, '')">
+                    <div id="dniaHelp" class="form-text">Ingrese el DNI del dueño de la entrada.
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-center my-3">
+                    <button type="button" class="btn btn-success btn-lg text-white" style="font-size: 2em;"
+                        id="buttonOpcionales" onclick="enviarFormulario()">Recibir entrada</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-12 d-none" id="containerObligatorio" style="margin-bottom: 80px; margin-top: 80px;">
+    <div class="col-12 text-center h1 text-poppins-500">INGRESA TUS DATOS
+        DE CONTACTO</div>
+    <div class="col-12 d-grid col-md-6 col-xl-4 p-2 px-md-3 px-xl-5 mt-3 border-round-5 bg-white"
+        style="justify-self: center;">
+        <div class="col-12 d-grid">
+            <div class="col-12">
+                <div class="mt-3 text-poppins-500 col-12" style="justify-self: center;">
+                    <label for="inputCelular" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-mobile-alt"></i>&nbsp;Numero de celular</label>
+                    <input type="text" class="form-control text-center" id="inputCelular" maxlength="9"
+                        inputmode="numeric" placeholder="987654321" onkeyup="enviarCodigoSMS(event)">
+                    <div class="form-text">Ingrese su numero de celular.
+                    </div>
+                </div>
+
+                <div class="mt-3 text-poppins-500 col-12 d-none" style="justify-self: center;" id="containerDNI">
+                    <label for="inputDNI" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-id-card"></i>&nbsp;DNI</label>
+                    <input type="text" class="form-control text-center" placeholder="12345678" id="inputDNI"
+                        aria-describedby="dniHelp" inputmode="numeric" maxlength="8" onkeyup="verificarDNI(event)">
+                    <div id="dniHelp" class="form-text">Se verificara su DNI con el codigo unico de
+                        verificacion.
+                    </div>
+                </div>
+
+                <div class="mt-3 text-poppins-500 col-12 d-none" style="justify-self: center;" id="containerNombre">
+                    <label for="inputNombre" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-signature"></i>&nbsp;Nombres y Apellidos</label>
+                    <input type="text" class="form-control text-center" id="inputNombre" aria-describedby="nombreHelp"
+                        onkeyup="convertirMayusculas('inputNombre')">
+                    <div id="nombreHelp" class="form-text">Ingresar su nombre como figura en su DNI.
+                    </div>
+                </div>
+
+                <div class="mt-3 text-poppins-500 col-12 d-none" style="justify-self: center;" id="containerPIN">
+                    <label for="inputPIN" class="form-label" style="font-size: 1.5em;"><i
+                            class="fas fa-key"></i>&nbsp;PIN
+                        secreto</label>
+                    <input type="text" class="form-control text-center" id="inputPIN" aria-describedby="pinHelp"
+                        inputmode="numeric" onkeyup="filtrarNumeros('inputPIN')">
+                    <div id="pinHelp" class="form-text">Debe recordar su PIN de seguridad por cualquier
+                        incoveniente.
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex justify-content-center my-3">
+                    <button type="button" class="btn btn-success btn-lg text-white" style="font-size: 2em;"
+                        id="buttonPagar" disabled onclick="enviarFormulario2()">Recibir entrada</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{%block scripts%}
+<script src="{%static 'recibirPage/script.js'%}"></script>
+<script src="{%static 'comprarPage/script.js'%}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+    integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% endblock %}
