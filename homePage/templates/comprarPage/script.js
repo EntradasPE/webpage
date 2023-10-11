@@ -88,6 +88,8 @@ function mostrarCampos() {
     document.getElementsByClassName("fa-minus-circle")[1].onclick = ""
     document.getElementsByClassName("fa-plus-circle")[0].onclick = ""
     document.getElementsByClassName("fa-plus-circle")[1].onclick = ""
+    const element = document.getElementById("inputCelular");
+        element.scrollIntoView();
 
 }
 
